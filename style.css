@@ -1,0 +1,639 @@
+:root {
+    --rust: #aa270b;
+    --dark-rust: #4b1609;
+    --deep: #1a0a00;
+    --orange: #dc6600;
+    --accent: #f08a17;
+    --cream: #f5ecd7;
+    --text-light: #f4dfc9;
+    --card-bg: rgba(176, 43, 11, 0.9);
+    --line: rgba(255,255,255,0.85);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+
+    background: var(--rust);
+
+    color: white;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.layout {
+    display: block;
+}
+
+
+.pageWrapper {
+    width: min(96vw, 1500px);
+    margin: 40px auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+}
+
+.page {
+    flex: 1;
+    min-width: 0;
+
+    border-radius: 36px 36px 0 0;
+
+    padding: 30px 35px 70px;
+
+    background-color: var(--dark-rust);
+
+    background-image:
+            radial-gradient(
+                    circle at 15% 15%,
+                    rgba(255,255,255,0.12),
+                    transparent 16%
+            ),
+
+            linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.08) 0 2px,
+                    transparent 2px 9px
+            ),
+
+            linear-gradient(
+                    rgba(0,0,0,0.2),
+                    rgba(0,0,0,0.35)
+            );
+
+    background-size:
+            auto,
+            14px 14px,
+            auto;
+
+    box-shadow: 0 0 24px rgba(0,0,0,0.35);
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+}
+
+.header {
+    width: 100%;
+
+    border-bottom: 3px solid var(--line);
+
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+}
+
+.brandText {
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+}
+
+.content {
+    width: 100%;
+    min-width: 0;
+}
+
+.sidebarNav {
+    position: sticky;
+    top: 40px;
+    width: 200px;          /* было 250px — но главное убрать margin-left */
+    min-width: 160px;
+    padding: 22px 16px;
+    background: rgba(67, 18, 7, 0.82);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 28px;
+    margin-left: 0;        /* убрать отрицательный отступ! */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    flex-shrink: 0;        /* добавить */
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 22px;
+
+    font-size: 24px;
+}
+
+.groupTrigger {
+    font-size: 24px;
+}
+
+.groupOption {
+    padding: 14px 18px;
+    font-size: 18px;
+}
+
+.nav a {
+    color: white;
+
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.nav a:hover {
+    color: var(--accent);
+}
+
+.groupNav {
+    position: relative;
+    width: 100%;
+}
+
+.groupTrigger:hover {
+    color: var(--accent);
+}
+
+.arrow {
+    font-size: 14px;
+
+    transition: transform 0.25s ease;
+}
+
+.arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.groupMenu {
+    position: static;
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    display: none;
+
+    background: rgba(55, 15, 6, 0.97);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+}
+
+.groupMenu.active {
+    display: block;
+}
+
+.groupOption:hover {
+    background: var(--orange);
+
+    padding-left: 22px;
+}
+
+.corpusSearch {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 38%;
+    gap: 20px;
+    margin-bottom: 45px;
+}
+
+#filtersPanel,
+#activeFilters,
+#results {
+    grid-column: 1 / -1;
+}
+
+.searchLine {
+    display: flex;          /* вместо grid */
+    flex-wrap: wrap;        /* перенос если не влезает */
+    gap: 20px;
+}
+
+.searchLine #lemmaInput {
+    flex: 1;
+    min-width: 200px;
+}
+
+.searchLine .orangeBtn {
+    flex-shrink: 0;
+    white-space: nowrap;    /* текст не переносится внутри кнопки */
+    padding: 10px 20px;
+}
+
+#lemmaInput,
+select {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+
+    background: #e9e9e9;
+
+    color: #1b1b1b;
+
+    font-size: 24px;
+
+    padding: 10px 16px;
+}
+
+#lemmaInput {
+    width: 100%;
+}
+
+.orangeBtn,
+.detailsBtn {
+    border: 0;
+
+    background: var(--orange);
+
+    color: #1c0b00;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+
+    transition: 0.2s;
+}
+
+.orangeBtn:hover,
+.detailsBtn:hover {
+    background: var(--accent);
+}
+
+.miniHelp {
+    color: var(--text-light);
+
+    font-size: 22px;
+
+    line-height: 1.35;
+
+    margin: 0;
+}
+
+.filtersPanel {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 14px;
+
+    padding: 18px;
+
+    background: rgba(120, 28, 5, 0.9);
+
+    border-radius: 18px;
+}
+
+.filtersPanel label {
+    display: grid;
+
+    gap: 8px;
+
+    font-size: 18px;
+}
+
+.filtersPanel select {
+    width: 100%;
+
+    font-size: 18px;
+}
+
+.hidden {
+    display: none;
+}
+
+.resultsText {
+    min-height: 40px;
+
+    font-size: 22px;
+
+    color: var(--text-light);
+
+    overflow-x: auto;
+    grid-column: 1 / -1;
+    max-width: 100%;
+}
+
+.divider {
+    height: 3px;
+
+    background: var(--line);
+
+    margin: 30px 0;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: rgba(40, 12, 4, 0.5);
+    min-width: 600px;
+}
+
+th,
+td {
+    padding: 10px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+
+    text-align: left;
+}
+
+.bandCard {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns: 42% 1fr;
+
+    gap: 34px;
+
+    margin-bottom: 42px;
+
+    padding: 36px 48px;
+
+    border-radius: 28px;
+
+    background: var(--card-bg);
+}
+
+.bandPhoto {
+    width: 100%;
+
+    border-radius: 4px;
+}
+
+.bandInfo h3 {
+    margin: 0 0 18px;
+
+    font-size: 32px;
+}
+
+.bandInfo p {
+    margin: 0;
+
+    font-size: 22px;
+
+    line-height: 1.3;
+}
+
+.textSection {
+    margin-top: 55px;
+
+    font-size: 24px;
+
+    line-height: 1.45;
+}
+
+.textSection h2 {
+    font-size: 36px;
+
+    margin-bottom: 26px;
+}
+
+.membersList {
+    padding-left: 25px;
+}
+
+.membersList li {
+    margin-bottom: 10px;
+
+    font-size: 20px;
+
+    color: var(--text-light);
+}
+
+.history {
+    padding: 120px 80px;
+}
+
+.sectionTitle {
+    font-size: 42px;
+
+    margin-bottom: 50px;
+}
+
+.historyList {
+    display: flex;
+    flex-direction: column;
+
+    gap: 32px;
+}
+
+.historyItem {
+    padding-bottom: 24px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.historyItem h3 {
+    font-size: 28px;
+
+    margin-bottom: 12px;
+}
+
+.historyItem p {
+    max-width: 900px;
+
+    line-height: 1.7;
+
+    opacity: 0.8;
+}
+
+/* ── 1400px — очень широкие мониторы ── */
+@media (max-width: 1400px) {
+    .pageWrapper {
+        width: 98vw;
+    }
+}
+
+/* ── 1100px — средние десктопы, небольшие ноутбуки ── */
+@media (max-width: 1280px) {
+    .pageWrapper {
+        flex-direction: column;
+        width: 98vw;
+    }
+
+    .sidebarNav {
+        position: static;
+        width: 100%;
+        margin-left: 0;
+        border-radius: 18px;
+    }
+
+    .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        font-size: 18px;
+        gap: 12px;
+    }
+}
+
+/* ── 768px — планшеты ── */
+@media (max-width: 768px) {
+    .pageWrapper {
+        margin: 16px auto;
+        gap: 12px;
+    }
+
+    .page {
+        padding: 20px 18px 50px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .brandText {
+        font-size: 28px;
+    }
+
+    .logo {
+        width: 80px;
+    }
+
+    .nav {
+        font-size: 16px;
+        gap: 8px;
+    }
+
+    .groupTrigger {
+        font-size: 16px;
+    }
+
+    .searchLine {
+        grid-template-columns: 1fr;
+    }
+
+    #lemmaInput,
+    select {
+        font-size: 18px;
+    }
+
+    .orangeBtn,
+    .detailsBtn {
+        font-size: 18px;
+        padding: 10px 14px;
+    }
+
+    .bandCard {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .bandPhoto {
+        width: 100%;
+        max-height: 260px;
+        object-fit: cover;
+    }
+
+    .bandInfo h3 {
+        font-size: 24px;
+    }
+
+    .bandInfo p {
+        font-size: 18px;
+    }
+
+    .filtersPanel {
+        grid-template-columns: 1fr;
+    }
+
+    .textSection {
+        font-size: 20px;
+        margin-top: 36px;
+    }
+
+    .textSection h2 {
+        font-size: 28px;
+    }
+
+    .history {
+        padding: 40px 20px;
+    }
+
+    .sectionTitle {
+        font-size: 32px;
+    }
+
+    .historyItem h3 {
+        font-size: 22px;
+    }
+
+    th, td {
+        font-size: 14px;
+        padding: 8px 6px;
+    }
+}
+
+/* ── 480px — мобильные ── */
+@media (max-width: 480px) {
+    .page {
+        padding: 14px 12px 40px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .brandText {
+        font-size: 22px;
+    }
+
+    .logo {
+        width: 60px;
+    }
+
+    .nav {
+        font-size: 14px;
+    }
+
+    #lemmaInput,
+    select,
+    .orangeBtn,
+    .detailsBtn {
+        font-size: 16px;
+    }
+
+    .textSection h2 {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .bandInfo h3 {
+        font-size: 20px;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 6px 4px;
+    }
+}
+
+
+.resultHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.pos {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+}
