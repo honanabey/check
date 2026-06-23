@@ -149,6 +149,7 @@ findBtn.addEventListener('click', renderResults);
 bandFilter.value = selectedGroupId;
 renderSelectedBand();
 
+// ОБНОВЛЕННАЯ ФУНКЦИЯ: теперь возвращает объект с названием песни и строкой
 function findLinesForWord(bandName, wordForm) {
     let songsData;
 
@@ -169,17 +170,21 @@ function findLinesForWord(bandName, wordForm) {
     const target = String(wordForm).toLowerCase();
     const result = [];
 
+    // Проходим по всем песням в songsData
     for (const songName in songsData) {
         const lines = songsData[songName];
-        lines.forEach(line => {
-            const words = line.toLowerCase().match(/[а-яёa-z0-9]+/gi) || [];
-            if (line.toLowerCase().includes(target)) {
-                console.log('строка содержит подстроку:', line, '| разбито на слова:', words);
+        // Проверяем каждую строку в песне
+        for (const line of lines) {
+            // Проверяем, содержит ли строка искомое слово (как отдельное слово)
+            const wordsInLine = line.toLowerCase().match(/[а-яёa-z0-9]+/gi) || [];
+            if (wordsInLine.includes(target)) {
+                // Возвращаем ОБЪЕКТ с названием песни и строкой
+                result.push({
+                    songName: songName,
+                    line: line
+                });
             }
-            if (words.includes(target)) {
-                result.push(line);
-            }
-        });
+        }
     }
 
     return result;
@@ -219,12 +224,14 @@ function renderResults() {
                 return String(signs).includes(selectedSign);
             })
             .map(word => {
-                const lines = findLinesForWord(band.name, word['Слово']);
+                // Получаем массив объектов {songName, line}
+                const contexts = findLinesForWord(band.name, word['Слово']);
                 return {
                     ...word,
                     bandName: band.name,
-                    songLines: lines
-                };})
+                    contexts: contexts // теперь это массив объектов
+                };
+            })
     );
 
     if (!found.length) {
@@ -232,6 +239,7 @@ function renderResults() {
         return;
     }
 
+    // ОБНОВЛЕННАЯ ТАБЛИЦА: добавлен столбец "Песня"
     results.innerHTML = `
     <table>
         <thead>
@@ -240,6 +248,7 @@ function renderResults() {
                 <th>Лемма</th>
                 <th>Признаки</th>
                 <th>Частота</th>
+                <th>Песня</th>
                 <th>Контекст</th>
             </tr>
         </thead>
@@ -249,13 +258,17 @@ function renderResults() {
             ? word['Грамматические признаки'].join(', ')
             : word['Грамматические признаки'];
 
+        // Берем первый найденный контекст (если есть)
+        const firstContext = word.contexts && word.contexts.length > 0 ? word.contexts[0] : null;
+
         return `
                     <tr>
                         <td>${word['Слово'] ?? ''}</td>
                         <td>${word['Начальная форма'] ?? ''}</td>
                         <td>${signs ?? ''}</td>
                         <td>${word['Частота'] ?? ''}</td>
-                        <td>${word.songLines.length ? `${word.songLines[0]}` : '—'}</td>
+                        <td>${firstContext ? firstContext.songName : '—'}</td>
+                        <td>${firstContext ? firstContext.line : '—'}</td>
                     </tr>
                 `;
     }).join('')}
