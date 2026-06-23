@@ -149,7 +149,7 @@ findBtn.addEventListener('click', renderResults);
 bandFilter.value = selectedGroupId;
 renderSelectedBand();
 
-// ОБНОВЛЕННАЯ ФУНКЦИЯ: теперь возвращает объект с названием песни и строкой
+// Функция поиска контекстов
 function findLinesForWord(bandName, wordForm) {
     let songsData;
 
@@ -161,24 +161,16 @@ function findLinesForWord(bandName, wordForm) {
         songsData = songsSecond;
     }
 
-    console.log('bandName:', JSON.stringify(bandName));
-    console.log('wordForm:', JSON.stringify(wordForm));
-    console.log('songsData keys:', Object.keys(songsData || {}));
-
     if (!songsData || !wordForm) return [];
 
     const target = String(wordForm).toLowerCase();
     const result = [];
 
-    // Проходим по всем песням в songsData
     for (const songName in songsData) {
         const lines = songsData[songName];
-        // Проверяем каждую строку в песне
         for (const line of lines) {
-            // Проверяем, содержит ли строка искомое слово (как отдельное слово)
             const wordsInLine = line.toLowerCase().match(/[а-яёa-z0-9]+/gi) || [];
             if (wordsInLine.includes(target)) {
-                // Возвращаем ОБЪЕКТ с названием песни и строкой
                 result.push({
                     songName: songName,
                     line: line
@@ -224,12 +216,11 @@ function renderResults() {
                 return String(signs).includes(selectedSign);
             })
             .map(word => {
-                // Получаем массив объектов {songName, line}
                 const contexts = findLinesForWord(band.name, word['Слово']);
                 return {
                     ...word,
                     bandName: band.name,
-                    contexts: contexts // теперь это массив объектов
+                    contexts: contexts
                 };
             })
     );
@@ -239,7 +230,7 @@ function renderResults() {
         return;
     }
 
-    // ОБНОВЛЕННАЯ ТАБЛИЦА: добавлен столбец "Песня"
+    // НОВАЯ ТАБЛИЦА: порядок столбцов изменен
     results.innerHTML = `
     <table>
         <thead>
@@ -247,9 +238,9 @@ function renderResults() {
                 <th>Слово</th>
                 <th>Лемма</th>
                 <th>Признаки</th>
-                <th>Частота</th>
                 <th>Песня</th>
                 <th>Контекст</th>
+                <th>Частота</th>
             </tr>
         </thead>
         <tbody>
@@ -258,17 +249,26 @@ function renderResults() {
             ? word['Грамматические признаки'].join(', ')
             : word['Грамматические признаки'];
 
-        // Берем первый найденный контекст (если есть)
-        const firstContext = word.contexts && word.contexts.length > 0 ? word.contexts[0] : null;
+        // ПОКАЗЫВАЕМ ВСЕ КОНТЕКСТЫ (а не только первый)
+        const contextsHtml = word.contexts && word.contexts.length > 0 
+            ? word.contexts.map(ctx => `
+                <div class="context-item">
+                    <span class="song-name">${ctx.songName}</span>
+                    <span class="line-text">${ctx.line}</span>
+                </div>
+            `).join('')
+            : '—';
 
         return `
                     <tr>
                         <td>${word['Слово'] ?? ''}</td>
                         <td>${word['Начальная форма'] ?? ''}</td>
                         <td>${signs ?? ''}</td>
+                        <td>${word.contexts && word.contexts.length > 0 
+                            ? word.contexts.map(c => c.songName).join(', ') 
+                            : '—'}</td>
+                        <td>${contextsHtml}</td>
                         <td>${word['Частота'] ?? ''}</td>
-                        <td>${firstContext ? firstContext.songName : '—'}</td>
-                        <td>${firstContext ? firstContext.line : '—'}</td>
                     </tr>
                 `;
     }).join('')}
