@@ -149,7 +149,7 @@ findBtn.addEventListener('click', renderResults);
 bandFilter.value = selectedGroupId;
 renderSelectedBand();
 
-// ИЗМЕНЕННАЯ ФУНКЦИЯ: возвращает объекты с названием песни и строкой
+// ОБНОВЛЕННАЯ ФУНКЦИЯ: теперь возвращает объект с названием песни и строкой
 function findLinesForWord(bandName, wordForm) {
     let songsData;
 
@@ -161,22 +161,30 @@ function findLinesForWord(bandName, wordForm) {
         songsData = songsSecond;
     }
 
+    console.log('bandName:', JSON.stringify(bandName));
+    console.log('wordForm:', JSON.stringify(wordForm));
+    console.log('songsData keys:', Object.keys(songsData || {}));
+
     if (!songsData || !wordForm) return [];
 
     const target = String(wordForm).toLowerCase();
     const result = [];
 
+    // Проходим по всем песням в songsData
     for (const songName in songsData) {
         const lines = songsData[songName];
-        lines.forEach(line => {
-            const words = line.toLowerCase().match(/[а-яёa-z0-9]+/gi) || [];
-            if (words.includes(target)) {
+        // Проверяем каждую строку в песне
+        for (const line of lines) {
+            // Проверяем, содержит ли строка искомое слово (как отдельное слово)
+            const wordsInLine = line.toLowerCase().match(/[а-яёa-z0-9]+/gi) || [];
+            if (wordsInLine.includes(target)) {
+                // Возвращаем ОБЪЕКТ с названием песни и строкой
                 result.push({
                     songName: songName,
                     line: line
                 });
             }
-        });
+        }
     }
 
     return result;
@@ -216,11 +224,12 @@ function renderResults() {
                 return String(signs).includes(selectedSign);
             })
             .map(word => {
+                // Получаем массив объектов {songName, line}
                 const contexts = findLinesForWord(band.name, word['Слово']);
                 return {
                     ...word,
                     bandName: band.name,
-                    contexts: contexts
+                    contexts: contexts // теперь это массив объектов
                 };
             })
     );
@@ -230,7 +239,7 @@ function renderResults() {
         return;
     }
 
-    // ТАБЛИЦА С ДОБАВЛЕННЫМ СТОЛБЦОМ "ПЕСНЯ"
+    // ОБНОВЛЕННАЯ ТАБЛИЦА: добавлен столбец "Песня"
     results.innerHTML = `
     <table>
         <thead>
@@ -249,7 +258,7 @@ function renderResults() {
             ? word['Грамматические признаки'].join(', ')
             : word['Грамматические признаки'];
 
-        // Берем первый контекст
+        // Берем первый найденный контекст (если есть)
         const firstContext = word.contexts && word.contexts.length > 0 ? word.contexts[0] : null;
 
         return `
